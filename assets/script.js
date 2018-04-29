@@ -1,4 +1,17 @@
+// Quokka.js config
+({
+  plugins: "jsdom-quokka-plugin",
+  jsdom: {
+    config: {
+      file: "index.html"
+    }
+  }
+})
+
 "use strict"
+
+let boardDiv = document.getElementById("board")
+console.log(document.title)
 
 const Gameboard = ((size) => {
 
@@ -14,8 +27,8 @@ const Gameboard = ((size) => {
     }
   })
 
-  const checkSquare = ((x, y, playerNumber) => {
-    return (board[y][x] === playerNumber)
+  const checkSquare = ((x, y) => {
+    return (board[y][x] === 0)
   })
 
   const victoryCheck= ((x, y) => {
@@ -43,13 +56,15 @@ const Gameboard = ((size) => {
 
     if (row === 3 || column === 3 || diagonal === 3 || anti === 3) {
       // player one
+      console.log("player one")
     } else if (row === -3 || column === -3 || diagonal === -3 || anti === -3) {
       // player two
+      console.log("player two")
     }
   })
 
   // Return only public functions
-  return {board, size, markSquare, checkSquare}
+  return {board, size, markSquare, checkSquare, victoryCheck}
 })
 
 
@@ -59,7 +74,6 @@ const Player = ((number) => {
   const losses = 0
 
   const takeMove = (() => {
-
   })
 })
 
@@ -68,6 +82,7 @@ const gameController = (() => {
   const playerOne = Player(1)
   const playerTwo = Player(-1)
   let currentPlayer
+  let gameboard
 
   const startGame = ((boardSize) => {
     gameboard = Gameboard(boardSize)
@@ -75,18 +90,17 @@ const gameController = (() => {
   })
 
   const playerTurn = (() => {
-    // Wait for valid input
     currentPlayer.takeMove()
     currentPlayer = (currentPlayer === playerOne ? playerTwo : playerOne)
     gameboard.victoryCheck()
   })
 
-  const gameLoop = (() => {
+  const drawBoard = (() => {
 
   })
+
+  return {startGame, playerTurn, gameboard}
 })()
 
-gameboard = Gameboard(3)
-gameboard.markSquare(2, 2, 1)
-
-console.log(gameboard)
+gameController.startGame(3)
+gameController.gameboard
