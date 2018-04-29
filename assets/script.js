@@ -10,14 +10,15 @@
 
 "use strict"
 
-let boardDiv = document.getElementById("board")
-console.log(document.title)
+let boardNode = document.getElementById("board")
 
 const Gameboard = ((size) => {
 
   const board = (() => {
     return Array.apply(null, Array(size)).map(() => {
-      return Array.apply(null, Array(size)).map(() => {return 0})
+      return Array.apply(null, Array(size)).map(() => {
+        return 0
+      })
     })
   })()
 
@@ -31,7 +32,7 @@ const Gameboard = ((size) => {
     return (board[y][x] === 0)
   })
 
-  const victoryCheck= ((x, y) => {
+  const victoryCheck = ((x, y) => {
     let row = 0
     let column = 0
 
@@ -63,8 +64,36 @@ const Gameboard = ((size) => {
     }
   })
 
+  const draw = (() => {
+    boardNode.innerHTML = ""
+
+    for (let [rowNumber, row] of board.entries()) {
+      let rowNode = document.createElement("div")
+      rowNode.id = `row-${rowNumber}`
+
+      for (let [squareNumber, square] of row.entries()) {
+        let squareNode = document.createElement("span")
+        squareNode.id = `${squareNumber}-${rowNumber}`
+        squareNode["data-x"] = squareNumber
+        squareNode["data-y"] = rowNumber
+        squareNode.addEventListener("click", () => {gameController.playerTurn(squareNumber, rowNumber)})        
+        if (square === 1) squareNode.innerHTML = "X"
+        if (square === -1) squareNode.innerHTML = "O"
+        if (square === 0) squareNode.innerHTML = "-"
+        rowNode.append(squareNode)
+      }
+      boardNode.append(rowNode)
+    }
+  })
+
   // Return only public functions
-  return {board, size, markSquare, checkSquare, victoryCheck}
+  return {
+    size,
+    markSquare,
+    checkSquare,
+    victoryCheck,
+    draw
+  }
 })
 
 
@@ -73,34 +102,40 @@ const Player = ((number) => {
   const wins = 0
   const losses = 0
 
-  const takeMove = (() => {
-  })
+  return {
+    symbol,
+    wins,
+    losses,
+    number
+  }
 })
 
 
 const gameController = (() => {
   const playerOne = Player(1)
   const playerTwo = Player(-1)
-  let currentPlayer
+  var currentPlayer = playerOne
   let gameboard
 
   const startGame = ((boardSize) => {
     gameboard = Gameboard(boardSize)
     currentPlayer = playerOne
+    gameboard.draw()
   })
 
-  const playerTurn = (() => {
-    currentPlayer.takeMove()
-    currentPlayer = (currentPlayer === playerOne ? playerTwo : playerOne)
-    gameboard.victoryCheck()
+  const playerTurn = ((x, y) => {
+    if (gameboard.checkSquare(x, y)) {
+      gameboard.markSquare(x, y, currentPlayer.number)
+      currentPlayer = (currentPlayer === playerOne ? playerTwo : playerOne)
+      gameboard.victoryCheck(x, y)
+      gameboard.draw()
+    }
   })
 
-  const drawBoard = (() => {
-
-  })
-
-  return {startGame, playerTurn, gameboard}
+  return {
+    startGame,
+    playerTurn
+  }
 })()
 
 gameController.startGame(3)
-gameController.gameboard
