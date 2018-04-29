@@ -17,29 +17,39 @@ const Gameboard = ((size) => {
     return (board[y][x] == playerNumber)
   })
 
-  const resetBoard = (() => {
-    board = [[0, 0, 0], [0, 0, 0], [0, 0, 0]]
-  })
-
   // Return only public functions
-  return {board, markSquare, checkSquare, resetBoard}
+  return {board, markSquare, checkSquare}
 })
+
 
 const Player = ((number) => {
   const symbol = (number == 1 ? "X" : "O")
+  const wins = 0
+  const losses = 0
 
   const takeMove = (() => {
 
   })
 })
 
+
 const gameController = (() => {
-  const startGame = (() => {
-    gameboard.resetBoard()
-    let one = Player(1)
-    let two = Player(-1)
+  const playerOne = Player(1)
+  const playerTwo = Player(-1)
+
+  const startGame = ((boardSize) => {
+    gameboard = Gameboard(boardSize)
+    gameLoop()
+  })
+
+  
+
+  const gameLoop = (() {
+
   })
 })()
 
 gameboard = Gameboard(3)
+gameboard.markSquare(2, 2, 1)
+
 console.log(gameboard)
