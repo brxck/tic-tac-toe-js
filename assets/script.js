@@ -13,6 +13,7 @@
 let boardNode = document.getElementById("board")
 
 const Gameboard = ((size) => {
+  let turnCounter = 0
 
   const board = (() => {
     return Array.apply(null, Array(size)).map(() => {
@@ -35,6 +36,7 @@ const Gameboard = ((size) => {
   const victoryCheck = ((x, y) => {
     let row = 0
     let column = 0
+    turnCounter += 1    
 
     // Check row
     for (let i = 0; i < size; i++) {
@@ -61,6 +63,9 @@ const Gameboard = ((size) => {
     } else if (row === -3 || column === -3 || diagonal === -3 || anti === -3) {
       // player two
       console.log("player two")
+    } else if (turnCounter === size * size) {
+      // draw
+      console.log("draw")
     }
   })
 
