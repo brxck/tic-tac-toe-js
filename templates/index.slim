@@ -1,14 +1,21 @@
 doctype html
 html
   head
-    title TicTacToe
+    title tictactoe-js
     meta charset="UTF-8"
     link href="assets/style.css" rel="stylesheet" type="text/css"
 
   body
-    p This file is generated from "templates/index.slim"
+    .container
+      h1 tictactoe-js
+      #board
 
-    #board
+      aside
+        #controls
+          button#start Play
+          button#decrease -
+          button#increase +
+        #log
     
     script src="assets/script.js" type="text/javascript"
     

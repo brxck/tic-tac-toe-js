@@ -10,8 +10,6 @@
 
 "use strict"
 
-let boardNode = document.getElementById("board")
-
 const Gameboard = ((size) => {
   let turnCounter = 0
 
@@ -36,7 +34,7 @@ const Gameboard = ((size) => {
   const victoryCheck = ((x, y) => {
     let row = 0
     let column = 0
-    turnCounter += 1    
+    turnCounter += 1
 
     // Check row
     for (let i = 0; i < size; i++) {
@@ -58,33 +56,31 @@ const Gameboard = ((size) => {
     }
 
     if (row === 3 || column === 3 || diagonal === 3 || anti === 3) {
-      // player one
-      console.log("player one")
+      return playerOne
     } else if (row === -3 || column === -3 || diagonal === -3 || anti === -3) {
-      // player two
-      console.log("player two")
+      return playerTwo
     } else if (turnCounter === size * size) {
-      // draw
-      console.log("draw")
+      return true
     }
   })
 
   const draw = (() => {
+    let boardNode = document.getElementById("board")    
     boardNode.innerHTML = ""
 
     for (let [rowNumber, row] of board.entries()) {
       let rowNode = document.createElement("div")
-      rowNode.id = `row-${rowNumber}`
+      rowNode.className = "row"
 
       for (let [squareNumber, square] of row.entries()) {
-        let squareNode = document.createElement("span")
-        squareNode.id = `${squareNumber}-${rowNumber}`
+        let squareNode = document.createElement("div")
+        squareNode.className = "square"
         squareNode["data-x"] = squareNumber
         squareNode["data-y"] = rowNumber
         squareNode.addEventListener("click", () => {gameController.playerTurn(squareNumber, rowNumber)})        
         if (square === 1) squareNode.innerHTML = "X"
         if (square === -1) squareNode.innerHTML = "O"
-        if (square === 0) squareNode.innerHTML = "-"
+        if (square === 0) squareNode.innerHTML = "\xa0" // character code for nonbreaking space
         rowNode.append(squareNode)
       }
       boardNode.append(rowNode)
@@ -102,45 +98,107 @@ const Gameboard = ((size) => {
 })
 
 
-const Player = ((number) => {
+const Player = ((number, name) => {
   const symbol = (number === 1 ? "X" : "O")
   const wins = 0
-  const losses = 0
+  name = name || `Player ${number === 1 ? "1" : "2"}`
 
   return {
     symbol,
     wins,
-    losses,
-    number
+    number,
+    name
   }
 })
 
+const playerOne = Player(1)
+const playerTwo = Player(-1)
 
 const gameController = (() => {
-  const playerOne = Player(1)
-  const playerTwo = Player(-1)
+
+  let started = false
+  let boardSize = 3
   var currentPlayer = playerOne
   let gameboard
 
-  const startGame = ((boardSize) => {
-    gameboard = Gameboard(boardSize)
+  let controlsNode = document.getElementById("controls")
+  let logNode = document.getElementById("log")
+
+  const setup = (() => {
+    let increaseNode = document.getElementById("increase")
+    let decreaseNode = document.getElementById("decrease")
+    let startNode = document.getElementById("start")
+    increaseNode.addEventListener("click", () => {setBoardSize(1, true)})
+    decreaseNode.addEventListener("click", () => {setBoardSize(-1, true)})
+    startNode.addEventListener("click", startGame)
+
+    gameController.setBoardSize(3, false)
+  })
+
+  const startGame = (() => {
+    started = true
     currentPlayer = playerOne
-    gameboard.draw()
+    gameController.setBoardSize(boardSize, false)
+    controlsNode.style.visibility = "hidden"
+    log(`${boardSize}x${boardSize} game started!`)
+    window.setTimeout(() => {log("Get moving!")}, 1000)
   })
 
   const playerTurn = ((x, y) => {
-    if (gameboard.checkSquare(x, y)) {
+    if (gameboard.checkSquare(x, y) && started) {
       gameboard.markSquare(x, y, currentPlayer.number)
-      currentPlayer = (currentPlayer === playerOne ? playerTwo : playerOne)
-      gameboard.victoryCheck(x, y)
       gameboard.draw()
+      let winner = gameboard.victoryCheck(x, y)
+      if (winner) {
+        endgame(winner)
+      } else {
+        currentPlayer = (currentPlayer === playerOne ? playerTwo : playerOne)
+      }
+    }
+  })
+
+  const endgame = ((winner) => {
+    if (winner === true) {
+      log("It's a draw...")
+    } else {
+      log(`${winner.name} wins!`)
+      winner.wins += 1
+    }
+    started = false
+    controlsNode.style.visibility = "visible"
+    window.setTimeout(() => log(`${playerTwo.name}: ${playerTwo.wins}`), 1000)       
+    window.setTimeout(() => log(`${playerOne.name}: ${playerOne.wins}`), 2000)   
+  })
+
+  const setBoardSize = ((increment, relative) => {
+    if (relative == true) {
+      let newSize = boardSize + increment
+      if (newSize < 3 || newSize > 8) return
+      boardSize = newSize
+    } else {
+      if (increment < 3 || increment > 8) return
+      boardSize = increment
+    }
+    gameboard = Gameboard(boardSize)
+    gameboard.draw()
+  })
+
+  const log = ((text) => {
+    let newText = document.createElement("p")
+    newText.textContent = `> ${text}`
+    logNode.prepend(newText)
+    if (logNode.childElementCount > 5) {
+      logNode.lastElementChild.remove()
     }
   })
 
   return {
     startGame,
-    playerTurn
+    playerTurn,
+    setBoardSize,
+    setup,
+    log
   }
 })()
 
-gameController.startGame(3)
+gameController.setup()
