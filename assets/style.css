@@ -50,34 +50,6 @@ aside {
   padding: 0.5em;
 }
 
-@media only screen and (max-width: 900px) {
-  .container {
-    margin-left: 0;
-  }
-
-  h1 {
-    font-size: 1em;
-  }
-
-  #header-large {
-    display: none;
-  }
-
-  #header-small {
-    display: inherit;
-  }
-
-  aside {
-    margin-top: 50px;
-    position: inherit;
-    width: 100%;
-    height: auto;
-    bottom: 0;
-    left: 0;
-    padding: 0.5em;
-  }
-}
-
 #log > p {
   font-size: 0.25em;
 }
@@ -116,4 +88,34 @@ button {
 
 .row:last-child > .square {
   border-bottom: none;
+}
+
+/* Responsive */
+
+@media only screen and (max-width: 900px) {
+  .container {
+    margin-left: 0;
+  }
+
+  h1 {
+    font-size: 1em;
+  }
+
+  #header-large {
+    display: none;
+  }
+
+  #header-small {
+    display: inherit;
+  }
+
+  aside {
+    margin-top: 50px;
+    position: inherit;
+    width: 100%;
+    height: auto;
+    bottom: 0;
+    left: 0;
+    padding: 0.5em;
+  }
 }
