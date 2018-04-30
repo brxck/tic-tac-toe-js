@@ -132,6 +132,8 @@ const gameController = (() => {
     decreaseNode.addEventListener("click", () => {setBoardSize(-1, true)})
     startNode.addEventListener("click", startGame)
 
+    log("Adjust the grid size here.")
+    window.setTimeout(() => {log("And press play to start!")}, 1000)
     gameController.setBoardSize(3, false)
   })
 
